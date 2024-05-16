@@ -14,6 +14,7 @@ import lox.Stmt.Expression;
 import lox.Stmt.If;
 import lox.Stmt.Print;
 import lox.Stmt.Var;
+import lox.Stmt.While;
 
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
@@ -239,6 +240,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
     }
 
     environment.define(stmt.name.lexeme, value);
+    return null;
+  }
+
+  @Override
+  public Void visitWhileStmt(While stmt) {
+    while (isTruthy(evaluate(stmt.condition))) {
+      execute(stmt.body);
+    }
+
     return null;
   }
 
