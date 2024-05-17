@@ -63,6 +63,14 @@ public class Lox {
       return;
     }
 
+    Resolver resolver = new Resolver(interpreter);
+    resolver.resolve(statements);
+
+    // 레졸루션 에러 발생 시 멈춘다.
+    if (hadError) {
+      return;
+    }
+
     interpreter.interpret(statements);
   }
 
