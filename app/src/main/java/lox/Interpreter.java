@@ -5,22 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lox.Expr.Assign;
-import lox.Expr.Binary;
-import lox.Expr.Call;
-import lox.Expr.Grouping;
-import lox.Expr.Literal;
-import lox.Expr.Logical;
-import lox.Expr.Unary;
-import lox.Expr.Variable;
-import lox.Stmt.Block;
-import lox.Stmt.Expression;
-import lox.Stmt.Function;
-import lox.Stmt.If;
-import lox.Stmt.Print;
-import lox.Stmt.Var;
-import lox.Stmt.While;
-
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
   final Environment globals = new Environment();
@@ -59,7 +43,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitBinaryExpr(Binary expr) {
+  public Object visitBinaryExpr(Expr.Binary expr) {
     Object left = evaluate(expr.left);
     Object right = evaluate(expr.right);
 
@@ -105,7 +89,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitCallExpr(Call expr) {
+  public Object visitCallExpr(Expr.Call expr) {
     Object callee = evaluate(expr.callee);
 
     List<Object> arguments = new ArrayList<>();
@@ -129,17 +113,17 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitGroupingExpr(Grouping expr) {
+  public Object visitGroupingExpr(Expr.Grouping expr) {
     return evaluate(expr.expression);
   }
 
   @Override
-  public Object visitLiteralExpr(Literal expr) {
+  public Object visitLiteralExpr(Expr.Literal expr) {
     return expr.value;
   }
 
   @Override
-  public Object visitLogicalExpr(Logical expr) {
+  public Object visitLogicalExpr(Expr.Logical expr) {
     Object left = evaluate(expr.left);
 
     if (expr.operator.type == TokenType.OR) {
@@ -156,7 +140,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitUnaryExpr(Unary expr) {
+  public Object visitUnaryExpr(Expr.Unary expr) {
     Object right = evaluate(expr.right);
 
     switch (expr.operator.type) {
@@ -172,7 +156,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitVariableExpr(Variable expr) {
+  public Object visitVariableExpr(Expr.Variable expr) {
     return lookUpVariable(expr.name, expr);
   }
 
@@ -252,7 +236,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitBlockStmt(Block stmt) {
+  public Void visitBlockStmt(Stmt.Block stmt) {
     executeBlock(stmt.statements, new Environment(environment));
     return null;
   }
@@ -274,20 +258,28 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitExpressionStmt(Expression stmt) {
+  public Void visitClassStmt(Stmt.Class stmt) {
+    environment.define(stmt.name.lexeme, null);
+    LoxClass klass = new LoxClass(stmt.name.lexeme);
+    environment.assign(stmt.name, klass);
+    return null;
+  }
+
+  @Override
+  public Void visitExpressionStmt(Stmt.Expression stmt) {
     evaluate(stmt.expression);
     return null;
   }
 
   @Override
-  public Void visitFunctionStmt(Function stmt) {
+  public Void visitFunctionStmt(Stmt.Function stmt) {
     LoxFunction function = new LoxFunction(stmt, environment);
     environment.define(stmt.name.lexeme, function);
     return null;
   }
 
   @Override
-  public Void visitIfStmt(If stmt) {
+  public Void visitIfStmt(Stmt.If stmt) {
     if (isTruthy(evaluate(stmt.condition))) {
       execute(stmt.thenBranch);
     } else if (stmt.elseBranch != null) {
@@ -298,7 +290,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitPrintStmt(Print stmt) {
+  public Void visitPrintStmt(Stmt.Print stmt) {
     Object value = evaluate(stmt.expression);
     System.out.println(stringify(value));
     return null;
@@ -315,7 +307,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitVarStmt(Var stmt) {
+  public Void visitVarStmt(Stmt.Var stmt) {
     Object value = null;
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer);
@@ -326,7 +318,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Void visitWhileStmt(While stmt) {
+  public Void visitWhileStmt(Stmt.While stmt) {
     while (isTruthy(evaluate(stmt.condition))) {
       execute(stmt.body);
     }
@@ -335,7 +327,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
   }
 
   @Override
-  public Object visitAssignExpr(Assign expr) {
+  public Object visitAssignExpr(Expr.Assign expr) {
     Object value = evaluate(expr.value);
 
     Integer distance = locals.get(expr);
