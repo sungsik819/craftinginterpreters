@@ -1,3 +1,7 @@
 {
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "files.associations": {
+    "chunk.h": "c",
+    "memory.h": "c"
+  }
 }
