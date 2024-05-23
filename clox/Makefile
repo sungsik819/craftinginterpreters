@@ -1,2 +1,2 @@
 main:
-	gcc -I. -o lox memory.c chunk.c main.c debug.c value.c
+	gcc -I. -o clox memory.c chunk.c main.c debug.c value.c vm.c
