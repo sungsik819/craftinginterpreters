@@ -2,6 +2,9 @@
   "java.compile.nullAnalysis.mode": "automatic",
   "files.associations": {
     "chunk.h": "c",
-    "memory.h": "c"
+    "memory.h": "c",
+    "string.h": "c",
+    "object.h": "c",
+    "value.h": "c"
   }
 }
