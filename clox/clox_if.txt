@@ -1,0 +1,2 @@
+if(false) print("condition was truthy");
+else print("condition was false");
