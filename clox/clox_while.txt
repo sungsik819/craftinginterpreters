@@ -1,0 +1,5 @@
+var loop = 0;
+while(loop < 5) {
+  print(loop);
+  loop = loop + 1;
+}
