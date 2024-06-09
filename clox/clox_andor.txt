@@ -1,0 +1,6 @@
+
+if(true and false) print("true");
+else print("condition was false");
+
+if(true or false) print("true");
+else print("condition was false");
