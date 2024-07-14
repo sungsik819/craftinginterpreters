@@ -14,7 +14,7 @@ void initChunk(Chunk* chunk) {
 void writeChunk(Chunk* chunk, uint8_t byte, int line) {
   if(chunk->capacity < chunk->count + 1) {
     int oldCapacity = chunk->capacity;
-    chunk->capacity = GRAW_CAPACITY(oldCapacity);
+    chunk->capacity = GROW_CAPACITY(oldCapacity);
     chunk->code = GRAW_ARRAY(uint8_t, chunk->code, oldCapacity, chunk->capacity);
     chunk->lines = GRAW_ARRAY(int, chunk->lines, oldCapacity, chunk->capacity);
   }

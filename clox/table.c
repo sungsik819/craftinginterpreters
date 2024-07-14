@@ -76,7 +76,7 @@ static void adjustCapacity(Table* table, int capacity) {
 
 bool tableSet(Table* table, ObjString* key, Value value) {
   if(table->count + 1 > table->capacity * TABLE_MAX_LOAD) {
-    int capacity = GRAW_CAPACITY(table->capacity);
+    int capacity = GROW_CAPACITY(table->capacity);
     adjustCapacity(table, capacity);
   }
 
@@ -128,6 +128,14 @@ ObjString* tableFindString(Table* table, const char* chars, int length, uint32_t
     }
 
     index = (index + 1) % table->capacity;
+  }
+}
+
+void markTable(Table* table) {
+  for(int i = 0; i < table->capacity; i++) {
+    Entry* entry = &table->entries[i];
+    markObject((Obj*)entry->key);
+    markValue(entry->value);
   }
 }
 

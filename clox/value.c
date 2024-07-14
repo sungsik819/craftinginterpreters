@@ -15,7 +15,7 @@ void initValueArray(ValueArray* array) {
 void writeValueArray(ValueArray* array, Value value) {
   if(array->capacity < array->count + 1) {
     int oldCapacity = array->capacity;
-    array->capacity = GRAW_CAPACITY(oldCapacity);
+    array->capacity = GROW_CAPACITY(oldCapacity);
     array->values = GRAW_ARRAY(Value, array->values, oldCapacity, array->capacity);
   }
 

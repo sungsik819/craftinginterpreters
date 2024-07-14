@@ -9,7 +9,7 @@
 
 #define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
 
-#define GRAW_CAPACITY(capacity) \
+#define GROW_CAPACITY(capacity) \
   ((capacity) < 8 ? 8 : (capacity) * 2)
 
 #define GRAW_ARRAY(type, pointer, oldCount, newCount) \
@@ -20,6 +20,9 @@
   reallocate(pointer, sizeof(type) * (oldCount), 0)
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
+void markObject(Obj* object);
+void markValue(Value value);
+void collectGarbage();
 void freeObjects();
 
 #endif
